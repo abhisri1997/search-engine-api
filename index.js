@@ -9,6 +9,10 @@ const url = "https://www.google.co.in/search?q=";
 searchURL = "";
 const data = [];
 
+app.get("/" => {
+  res.json("Welcome to the api by - Abhinav Kumar, Navigate /api/{query} to check the api work.")
+})
+
 app.get("/api/:searchTerm", (req, res) => {
   console.log(req.params.searchTerm);
   searchURL = url + req.params.searchTerm;
