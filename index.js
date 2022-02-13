@@ -9,7 +9,7 @@ const url = "https://www.google.co.in/search?q=";
 searchURL = "";
 const data = [];
 
-app.get("/" => {
+app.get("/", (req, res) => {
   res.json("Welcome to the api by - Abhinav Kumar, Navigate /api/{query} to check the api work.")
 })
 
