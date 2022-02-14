@@ -26,7 +26,7 @@ app.get("/api/:searchTerm", (req, res) => {
         const title = $(this).text();
         const link = $(this).parent().attr("href");
         const url = link.slice(7, link.lastIndex);
-        console.log(url)
+        //console.log(url)
         data.push({
           title,
           url
@@ -38,6 +38,9 @@ app.get("/api/:searchTerm", (req, res) => {
     .catch((err) => {
       console.error(err);
     });
+    data.splice(0, data.length)
+    //console.log(data);
 });
+
 
 app.listen(PORT, () => console.log(`listening on port ${PORT}`));
