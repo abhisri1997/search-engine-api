@@ -9,7 +9,7 @@ const url = "https://www.google.co.in/search?num=10&q=";
 var searchURL = "";
 const data = [];
 var nextPage = 0;
-var nextURL = '';
+var nextURL = "";
 
 app.get("/", (req, res) => {
   res.json(
@@ -19,7 +19,7 @@ app.get("/", (req, res) => {
 
 app.get("/api/:searchTerm", (req, res) => {
   //console.log(req.params.searchTerm);
-  searchURL = url + req.params.searchTerm + '&start=' + nextPage;
+  searchURL = url + req.params.searchTerm + "&start=" + nextPage;
   //console.log("Search URL: " + searchURL);
 
   async function scrapeSearches(searchURL) {
@@ -34,10 +34,14 @@ app.get("/api/:searchTerm", (req, res) => {
           const title = $(this).text();
           const link = $(this).parent().attr("href");
           const url = link.slice(7, link.lastIndex);
-          //console.log(url)
+          const page = nextPage;
+          const pageURL = searchURL;
+          ////console.log(url)
           data.push({
             title,
             url,
+            page,
+            pageURL,
           });
         });
 
@@ -50,10 +54,10 @@ app.get("/api/:searchTerm", (req, res) => {
   }
 
   async function scrapeNextUrls(data, nextUrl) {
-    /*console.log(
-      "Inside scrapeNextUrls: " + nextURL + " Length: " + nextURL.length
-    );*/
-    while (nextPage!=60) {
+    // //console.log(
+    //   "Inside scrapeNextUrls: " + nextURL + " Length: " + nextURL.length
+    // );
+    while (nextPage <= 60) {
       await axios(nextURL, { headers: { "User-Agent": "TEST" } })
         .then((response) => {
           const nextPageHtml = response.data;
@@ -64,10 +68,14 @@ app.get("/api/:searchTerm", (req, res) => {
             const title = $(this).text();
             const link = $(this).parent().attr("href");
             const url = link.slice(7, link.lastIndex);
-            //console.log(url)
+            const page = nextPage / 10;
+            const pageURL = nextURL;
+            ////console.log(url)
             data.push({
               title,
               url,
+              page,
+              pageURL,
             });
           });
         })
@@ -75,6 +83,7 @@ app.get("/api/:searchTerm", (req, res) => {
           console.error(err);
         });
       nextPage = nextPage + 10;
+      //console.log(nextPage);
       await sleep(1000);
     }
     return data;
@@ -90,9 +99,10 @@ app.get("/api/:searchTerm", (req, res) => {
     const data = await scrapeSearches(searchURL);
     nextURL = searchURL;
     const urlPageListings = await scrapeNextUrls(data, nextURL);
-    //console.log(data);
+    ////console.log(data);
     res.json(data);
     data.splice(0, data.length);
+    nextPage = 0;
   }
 
   main();
